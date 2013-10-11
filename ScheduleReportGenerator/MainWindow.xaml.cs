@@ -23,6 +23,9 @@ namespace ScheduleReportGenerator
         public MainWindow()
         {
             InitializeComponent();
+
+            var runner = new Runner();
+            runner.RunAsync(() => Environment.Exit(0));
         }
     }
 }

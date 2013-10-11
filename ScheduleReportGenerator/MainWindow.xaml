@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ctr="clr-namespace:ScheduleReportGenerator.Controls" 
-        Title="MainWindow" Height="91.97" Width="372.993" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="None">
+        Title="Schedule Report Generator" Height="91.97" Width="372.993" ResizeMode="NoResize" ShowInTaskbar="False">
     <Grid Height="67" Width="462">
         <ctr:CircularProgressBar x:Name="progressBar"
                              DockPanel.Dock="Left"
