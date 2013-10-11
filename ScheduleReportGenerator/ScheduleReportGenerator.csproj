@@ -67,8 +67,10 @@
       <DependentUpon>AppSettings.tt</DependentUpon>
     </Compile>
     <Compile Include="ExcelLauncher.cs" />
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Generator.cs" />
     <Compile Include="Models\Gate.cs" />
+    <Compile Include="Repositories\BaseRepository.cs" />
     <Compile Include="Repositories\GateRepository.cs" />
     <Compile Include="Runner.cs" />
     <Page Include="Controls\CircularProgressBar.xaml">

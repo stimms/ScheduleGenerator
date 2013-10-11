@@ -6,22 +6,20 @@ using ScheduleReportGenerator.Models;
 
 namespace ScheduleReportGenerator.Repositories
 {
-    class BaseRepository
-    {
-        public System.Data.IDbConnection GetConnection()
-        {
-            var connection = new System.Data.OleDb.OleDbConnection(String.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0}", AppSettings.DatabasePath));
-            connection.Open();
-            return connection;
-        }
-    }
     class GateRepository : BaseRepository
     {
         public IEnumerable<Gate> GetGates()
         {
             using (var connection = GetConnection())
             {
-                return connection.Query<Gate>("select * from tblGate2");
+                return connection.Query<Gate>(@"select g.*, 
+                                                       gm.Description as MajorGate,
+                                                       w.Who as SCLRep 
+                                                  from (tblGate2 g inner join 
+                                                       tblGate2Major gm 
+                                                    on g.order = gm.order) inner join 
+                                                       tblwho w 
+                                                    on w.id = g.whoid ");
             }
         }
     }
