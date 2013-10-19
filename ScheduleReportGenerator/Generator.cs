@@ -23,7 +23,9 @@ namespace ScheduleReportGenerator
                 _worksheet.Cells[1, 1, 500, 500].Style.Font.Size = 8;
                 _gates = new GateRepository().GetGates();
 
-                AddTitles();
+                AddStaticTitles();
+                AddDynamicTitles();
+
                 SetWidths();
                 SetHeights();
 
@@ -32,7 +34,7 @@ namespace ScheduleReportGenerator
                 package.Save();
             }
         }
-        private void AddTitles()
+        private void AddStaticTitles()
         {
             CreateTitle("Stage 2 Key Inputs", 2, 1);
             CreateTitle("Gate 2 Key Deliverables", 2, 2);
@@ -42,6 +44,18 @@ namespace ScheduleReportGenerator
             CreateTitle("Due Date", 2, 6);
         }
 
+        private void AddDynamicTitles()
+        {
+            int column = 7;
+            var startDate = _gates.Where(x => x.DueDate.HasValue).Select(x => x.DueDate).Min().Value.GetMonday();
+            var endDate = _gates.Where(x => x.DueDate.HasValue).Select(x => x.DueDate).Max().Value.GetMonday();
+            var week = startDate;
+            while(week<endDate)
+            {
+                _worksheet.Cells[2, column++].Value = week.ToString("dd-MMM-yyyy");
+                week = week.AddDays(7);
+            }
+        }
         private void CreateTitle(string value, int row, int column)
         {
             _worksheet.Cells[row, column].Value = value;
