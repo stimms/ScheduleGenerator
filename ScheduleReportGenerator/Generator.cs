@@ -47,13 +47,31 @@ namespace ScheduleReportGenerator
         private void AddDynamicTitles()
         {
             int column = 7;
+            int groupStartColumn = column;
+            bool fillAlternate = false;
+            
             var startDate = _gates.Where(x => x.DueDate.HasValue).Select(x => x.DueDate).Min().Value.GetMonday();
             var endDate = _gates.Where(x => x.DueDate.HasValue).Select(x => x.DueDate).Max().Value.GetMonday();
             var week = startDate;
+            var groupStartDate = week;
+
             while(week<endDate)
             {
-                _worksheet.Cells[2, column++].Value = week.ToString("dd-MMM-yyyy");
+                _worksheet.Cells[3, column].Value = week.ToString("dd-MMM");          
                 week = week.AddDays(7);
+                if(week.Month != groupStartDate.Month)
+                {
+                    _worksheet.Cells[2, groupStartColumn, 2, column].Merge = true;
+                    _worksheet.Cells[2, groupStartColumn].Value = groupStartDate.ToString("MMM");
+                    _worksheet.Cells[2, groupStartColumn].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    _worksheet.Cells[2, groupStartColumn].Style.Font.Bold = true;
+                    _worksheet.Cells[2, groupStartColumn].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    _worksheet.Cells[2, groupStartColumn].Style.Fill.BackgroundColor.SetColor(fillAlternate ? System.Drawing.Color.FromArgb(196, 215, 155) : System.Drawing.Color.FromArgb(184, 204, 228));
+                    fillAlternate = !fillAlternate;
+                    groupStartDate = week;
+                    groupStartColumn = column+1;
+                }
+                column++;
             }
         }
         private void CreateTitle(string value, int row, int column)
