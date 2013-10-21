@@ -8,8 +8,10 @@ namespace ScheduleReportGenerator
     /// </summary>
     public static class AppSettings
     {
-        public static string DatabasePath { get { return GetConfigSettingItem("DatabasePath"); } }
     
+    public static string DatabasePath { get { return GetConfigSettingItem("DatabasePath"); } }
+    
+
         private const string MISSING_CONFIG = "Invalid configuration. Required AppSettings section is missing";
         private const string INVALID_CONFIG_SETTING = "Invalid configuration setting name: {0}";
 

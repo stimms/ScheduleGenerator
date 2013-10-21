@@ -134,7 +134,15 @@ namespace ScheduleReportGenerator
                 }
                 _worksheet.Cells[groupStartRow, 1, row, columnMap.Select(x => x.Value).Max()].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
                 row++;
-                
+
+                _worksheet.Cells[1, 1, row, 1].Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Medium;
+                _worksheet.Cells[1, 2, row, 2].Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Medium;
+                _worksheet.Cells[1, 3, row, 3].Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Medium;
+                _worksheet.Cells[1, 4, row, 4].Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Medium;
+                _worksheet.Cells[1, 5, row, 5].Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Medium;
+                _worksheet.Cells[1, 6, row, 6].Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Medium;
+                _worksheet.Cells[1, 7, row, 7].Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Medium;
+
             }
         }
 
