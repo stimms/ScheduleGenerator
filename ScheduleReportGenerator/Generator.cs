@@ -62,7 +62,7 @@ namespace ScheduleReportGenerator
                 _worksheet.Cells[3, column].Value = week.ToString("dd-MMM");
                 columnMap.Add(new KeyValuePair<DateTime, int>(week, column));
                 week = week.AddDays(7);
-                if (week.Month != groupStartDate.Month)
+                if (week.Month != groupStartDate.Month || week == endDate)
                 {
                     _worksheet.Cells[2, groupStartColumn, 2, column].Merge = true;
                     _worksheet.Cells[2, groupStartColumn].Value = groupStartDate.ToString("MMM");
@@ -71,6 +71,7 @@ namespace ScheduleReportGenerator
                     _worksheet.Cells[2, groupStartColumn].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                     _worksheet.Cells[2, groupStartColumn].Style.Fill.BackgroundColor.SetColor(fillAlternate ? System.Drawing.Color.FromArgb(196, 215, 155) : System.Drawing.Color.FromArgb(184, 204, 228));
                     _worksheet.Cells[2, groupStartColumn, 2, column].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                    _worksheet.Cells[3, groupStartColumn, 3, column].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
                     fillAlternate = !fillAlternate;
                     groupStartDate = week;
                     groupStartColumn = column + 1;
@@ -122,17 +123,22 @@ namespace ScheduleReportGenerator
                     _worksheet.Cells[row, 4].Value = gate.SCLStartDate.HasValue ? gate.SCLStartDate.Value.ToAppliationDate() : "";
                     _worksheet.Cells[row, 5].Value = gate.SCLEndDate.HasValue ? gate.SCLEndDate.Value.ToAppliationDate() : "";
                     _worksheet.Cells[row, 6].Value = gate.DueDate.HasValue ? gate.DueDate.Value.ToAppliationDate() : "";
+                   
                     if (gate.DueDate.HasValue)
                     {
                         var cell = _worksheet.Cells[row, columnMap.Where(x => x.Key == gate.DueDate.Value.GetMonday()).First().Value];
                         cell.Value = gate.Deliverable;
                         cell.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
                         cell.Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Medium;
+                        cell.Style.Border.Right.Color.SetColor(System.Drawing.Color.Black);
                         cell.Style.Font.Bold = gate.Special;
                     }
+                    AddMonthBreaks(columnMap, row);
+                    
                     row++;
                 }
                 _worksheet.Cells[groupStartRow, 1, row, columnMap.Select(x => x.Value).Max()].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                AddMonthBreaks(columnMap, row);
                 row++;
 
                 _worksheet.Cells[1, 1, row, 1].Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Medium;
@@ -143,9 +149,29 @@ namespace ScheduleReportGenerator
                 _worksheet.Cells[1, 6, row, 6].Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Medium;
                 _worksheet.Cells[1, 7, row, 7].Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Medium;
 
+                
+
             }
         }
 
+        private void AddMonthBreaks(IEnumerable<KeyValuePair<System.DateTime, System.Int32>> columnMap, int row)
+        {
+            var previousMonth = columnMap.OrderBy(x => x.Value).First().Key.Month;
+            foreach (var col in columnMap.OrderBy(x => x.Value))
+            {
+                if (col.Key.Month != previousMonth)
+                {
+                    if (_worksheet.Cells[row, col.Value - 1].Value == null)
+                    {
+                        _worksheet.Cells[row, col.Value].Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thick;
+                        _worksheet.Cells[row, col.Value].Style.Border.Left.Color.SetColor(System.Drawing.Color.LightGray);
+                    }
+                    previousMonth = col.Key.Month;
+
+                }
+
+            }
+        }
         private int GetNumberOfDecimals(decimal number)
         {
             return number.ToString().Split('.').Last().Length;
